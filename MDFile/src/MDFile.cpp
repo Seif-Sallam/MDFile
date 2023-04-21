@@ -4,16 +4,16 @@
 #include <math.h>
 #include <assert.h>
 
-MDFile& MDFile::Header(const std::string& header, uint32_t level)
+MDFile& MDFile::Header(const char* header, uint32_t level)
 {
 	for (int i = 0; i < level; i++)
 		fileOutput << "#";
-	fileOutput << " " + header + "\n\n";
+	fileOutput << " " << header << "\n\n";
 
 	return *this;
 }
 
-MDFile& MDFile::Body(const std::string& text)
+MDFile& MDFile::Body(const char* text)
 {
 	fileOutput << text << "\n\n";
 	return *this;
@@ -23,25 +23,6 @@ MDFile& MDFile::Separator()
 {
 	fileOutput << "---\n\n";
 	return *this;
-}
-
-void MDFile::Write(const std::string_view fileName)
-{
-	std::string output = fileOutput.str();
-	uint32_t i = output.size() - 1;
-	// Removing trailing spaces
-	while(i >= 0)
-	{
-		if (output[i] != '\n')
-			break;
-		i--;
-	}
-	std::ofstream outputFile(fileName.data());
-	if (outputFile.fail())
-		return;
-	outputFile.write(output.data(), i + 1);
-	outputFile << "\n";
-	outputFile.close();
 }
 
 MDFile& MDFile::BeginTable(size_t cols)
@@ -124,4 +105,33 @@ MDFile& MDFile::Row(std::initializer_list<std::string> rowData)
 {
 	rows.emplace_back(RowData{rowData});
 	return *this;
+}
+
+MDFile& MDFile::Image(const char* imageName, const char* altText)
+{
+	if (altText == nullptr)
+		fileOutput << "[" << imageName << "](" << imageName << ")\n";
+	else
+		fileOutput << "[" << altText << "](" << imageName << ")\n";
+
+	return *this;
+}
+
+void MDFile::Write(const char* fileName)
+{
+	std::string output = fileOutput.str();
+	uint32_t i = output.size() - 1;
+	// Removing trailing spaces
+	while(i >= 0)
+	{
+		if (output[i] != '\n')
+			break;
+		i--;
+	}
+	std::ofstream outputFile(fileName);
+	if (outputFile.fail())
+		return;
+	outputFile.write(output.data(), i + 1);
+	outputFile << "\n";
+	outputFile.close();
 }

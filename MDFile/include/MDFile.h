@@ -13,14 +13,15 @@ class MDFile
 	};
 public:
 	MDFile() = default;
-	MDFile& Header(const std::string& header, uint32_t level = 1);
-	MDFile& Body(const std::string& text);
+	MDFile& Header(const char* header, uint32_t level = 1);
+	MDFile& Body(const char* text);
 	MDFile& Separator();
 	MDFile& BeginTable(size_t cols);
 	MDFile& EndTable();
 	MDFile& Row(std::initializer_list<std::string> rowData);
+	MDFile& Image(const char* imageName, const char* altText = nullptr);
 
-	void Write(const std::string_view fileName);
+	void Write(const char* fileName);
 private:
 	std::stringstream fileOutput;
 	std::vector<RowData> rows;
