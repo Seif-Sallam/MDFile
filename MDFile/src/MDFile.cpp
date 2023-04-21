@@ -51,8 +51,8 @@ MDFile& MDFile::EndTable()
 		auto finalIndex = std::min(numOfCols, data.size());
 		for(size_t j = 0; j < finalIndex; j++)
 		{
-			if(data[j].size() > largestSizes[j])
-				largestSizes[j] = data[j].size();
+			if(data[j].data.size() > largestSizes[j])
+				largestSizes[j] = data[j].data.size();
 		}
 	}
 
@@ -79,13 +79,13 @@ MDFile& MDFile::EndTable()
 		}
 		return ss.str();
 	};
-	auto addRowWithData = [&](const std::vector<std::string>& data)
+	auto addRowWithData = [&](const std::vector<RowItem>& data)
 	{
 		std::stringstream ss;
 		ss << '|';
 		size_t finalIndex = std::min(data.size(), this->numOfCols);
 		for (size_t i = 0; i < finalIndex; i++)
-			ss << centerWithSpaces(data[i], largestSizes[i]) << '|';
+			ss << centerWithSpaces(data[i].data, largestSizes[i]) << '|';
 		return ss.str();
 	};
 	// Header
@@ -101,7 +101,7 @@ MDFile& MDFile::EndTable()
 	return *this;
 }
 
-MDFile& MDFile::Row(std::initializer_list<std::string> rowData)
+MDFile& MDFile::Row(std::initializer_list<RowItem> rowData)
 {
 	rows.emplace_back(RowData{rowData});
 	return *this;

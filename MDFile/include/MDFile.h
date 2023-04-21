@@ -7,9 +7,24 @@
 
 class MDFile
 {
+	class RowItem
+	{
+	public:
+		inline RowItem(uint32_t value) : data(std::to_string(value)) {}
+		inline RowItem(int32_t value) : data(std::to_string(value)) {}
+		inline RowItem(const char* value) : data(value) {}
+		inline RowItem(char value) : data(std::to_string(value)) {}
+		inline RowItem(float value) : data(std::to_string(value)) {}
+		inline RowItem(double value) : data(std::to_string(value)) {}
+
+	private:
+		std::string data;
+		friend class MDFile;
+	};
+
 	struct RowData
 	{
-		std::vector<std::string> rowData;
+		std::vector<RowItem> rowData;
 	};
 public:
 	MDFile() = default;
@@ -18,7 +33,7 @@ public:
 	MDFile& Separator();
 	MDFile& BeginTable(size_t cols);
 	MDFile& EndTable();
-	MDFile& Row(std::initializer_list<std::string> rowData);
+	MDFile& Row(std::initializer_list<RowItem> rowData);
 	MDFile& Image(const char* imageName, const char* altText = nullptr);
 
 	void Write(const char* fileName);
